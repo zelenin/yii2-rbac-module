@@ -20,7 +20,7 @@ or add
 "zelenin/yii2-rbac-module": "dev-master"
 ```
 
-to the require section of your composer.json
+to the require section of your ```composer.json```
 
 ## Usage
 
@@ -46,7 +46,7 @@ Run:
 php yii migrate --migrationPath=@yii/rbac/migrations/
 ```
 
-or use sql file in @yii/rbac/migrations/
+or use sql file in ```@yii/rbac/migrations/```
 
 For generating assignments from php file add
 
