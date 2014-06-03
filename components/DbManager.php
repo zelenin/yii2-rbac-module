@@ -24,7 +24,7 @@ class DbManager extends \yii\rbac\DbManager
 
     public function checkAccess($userId, $permissionName, $params = [])
     {
-        if (!$this->cache && !$this->cacheDuration) {
+        if (!$this->cache || !$this->cacheDuration) {
             return parent::checkAccess($userId, $permissionName, $params);
         }
 
