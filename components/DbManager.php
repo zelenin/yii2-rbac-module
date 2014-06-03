@@ -2,12 +2,12 @@
 
 namespace Zelenin\yii\modules\Rbac\components;
 
-use Yii;
 use yii\rbac\Assignment;
 use yii\rbac\Item;
 use yii\rbac\Permission;
 use yii\rbac\Role;
 use yii\web\User;
+use Yii;
 
 class DbManager extends \yii\rbac\DbManager
 {

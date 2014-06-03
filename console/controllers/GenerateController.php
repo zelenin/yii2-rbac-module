@@ -14,7 +14,7 @@ class GenerateController extends Controller
         /** @var DbManager $auth */
         $auth = Yii::$app->getAuthManager();
         if (!$auth instanceof DbManager) {
-            throw new InvalidConfigException('You should configure "authManager" component to use database before executing this migration.');
+            throw new InvalidConfigException('You should configure "authManager" component to use database before generating.');
         }
         $auth->removeAll();
         if ($auth->load()) {
