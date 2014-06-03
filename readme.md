@@ -64,6 +64,8 @@ php yii rbac/generate
 
 For rbac.php example see ```example/rbac.php```
 
+## Info
+
 See [Yii2 authorization guide](https://github.com/yiisoft/yii2/blob/master/docs/guide/security-authorization.md)
 
 ## Author
