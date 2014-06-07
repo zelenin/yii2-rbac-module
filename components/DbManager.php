@@ -17,9 +17,9 @@ class DbManager extends \yii\rbac\DbManager
     /** @var User $user */
     private $user;
 
-    public $cache = false;
+    public $enableCaching = false;
     public $cachePrefix = 'rbac_';
-    public $cacheDuration = 300;
+    public $cachingDuration = 300;
     private $cacheJar = [];
 
     public function checkAccess($userId, $permissionName, $params = [])

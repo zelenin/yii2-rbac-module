@@ -34,8 +34,8 @@ Configure AuthManager component in config:
 		'defaultRole' => 'user',
 		'roleParam' => 'role', // User model attribute
 		// optional
-		'cache' => false,
-		'cacheDuration' => 60
+		'enableCaching' => false,
+		'cachingDuration' => 60
 	]
 ]
 ```
