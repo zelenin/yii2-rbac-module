@@ -2,12 +2,12 @@
 
 namespace Zelenin\yii\modules\Rbac\components;
 
+use Yii;
 use yii\rbac\Assignment;
 use yii\rbac\Item;
 use yii\rbac\Permission;
 use yii\rbac\Role;
 use yii\web\User;
-use Yii;
 
 class DbManager extends \yii\rbac\DbManager
 {
@@ -18,28 +18,26 @@ class DbManager extends \yii\rbac\DbManager
     private $user;
 
     public $enableCaching = false;
-    public $cachePrefix = 'rbac_';
     public $cachingDuration = 300;
-    private $cacheJar = [];
+    private $cache = [];
 
     public function checkAccess($userId, $permissionName, $params = [])
     {
-        if (!$this->cache || !$this->cacheDuration) {
+        if (!$this->enableCaching || !$this->cachingDuration) {
             return parent::checkAccess($userId, $permissionName, $params);
         }
+        $key = serialize([__CLASS__, $userId, $permissionName, $params]);
 
-        $key = $this->cachePrefix . $userId . $permissionName . serialize($params);
-
-        if (isset($this->cacheJar[$key])) {
-            return $this->cacheJar[$key];
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
         }
 
         $cache = Yii::$app->getCache();
         $data = $cache->get($key);
         if ($data === false) {
             $data = parent::checkAccess($userId, $permissionName, $params);
-            $this->cacheJar[$key] = $data;
-            $cache->set($key, $data, $this->cacheDuration);
+            $this->cache[$key] = $data;
+            $cache->set($key, $data, $this->cachingDuration);
         }
         return $data;
     }
