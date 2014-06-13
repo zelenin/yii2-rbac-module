@@ -3,13 +3,16 @@
 namespace Zelenin\yii\modules\Rbac\console\controllers;
 
 use yii\base\InvalidConfigException;
-use Yii;
 use yii\console\Controller;
+use Yii;
 use Zelenin\yii\modules\Rbac\components\DbManager;
 
-class GenerateController extends Controller
+class RbacController extends Controller
 {
-    public function actionIndex()
+    /**
+     * @throws InvalidConfigException
+     */
+    public function actionGenerate()
     {
         /** @var DbManager $auth */
         $auth = Yii::$app->getAuthManager();
@@ -18,7 +21,7 @@ class GenerateController extends Controller
         }
         $auth->removeAll();
         if ($auth->load()) {
-            echo 'RBAC rules is generated' . PHP_EOL;
+            echo PHP_EOL . 'RBAC rules is generated' . PHP_EOL;
         }
     }
 }

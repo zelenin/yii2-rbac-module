@@ -11,16 +11,25 @@ use yii\web\User;
 
 class DbManager extends \yii\rbac\DbManager
 {
+    /** @var string */
     public $authFile = '@app/data/rbac.php';
+    /** @var string */
     public $defaultRole = 'user';
+    /** @var string */
     public $roleParam = 'role';
     /** @var User $user */
     private $user;
 
+    /** @var bool */
     public $enableCaching = false;
+    /** @var int */
     public $cachingDuration = 300;
+    /** @var array */
     private $cache = [];
 
+    /**
+     * @inheritdoc
+     */
     public function checkAccess($userId, $permissionName, $params = [])
     {
         if (!$this->enableCaching || !$this->cachingDuration) {
@@ -50,6 +59,9 @@ class DbManager extends \yii\rbac\DbManager
         }
     }
 
+    /**
+     * @return bool
+     */
     public function load()
     {
         $this->authFile = Yii::getAlias($this->authFile);
@@ -108,6 +120,10 @@ class DbManager extends \yii\rbac\DbManager
         return true;
     }
 
+    /**
+     * @param string $file
+     * @return array
+     */
     protected function loadFromFile($file)
     {
         return is_file($file)
@@ -136,6 +152,11 @@ class DbManager extends \yii\rbac\DbManager
         }
     }
 
+    /**
+     * @param array $roles
+     * @param int $userId
+     * @return bool
+     */
     public function revokeRoleAssignments($roles, $userId)
     {
         return $this->db->createCommand()
