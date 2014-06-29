@@ -3,7 +3,6 @@
 namespace Zelenin\yii\modules\Rbac\components;
 
 use Yii;
-use yii\rbac\Assignment;
 use yii\rbac\Item;
 use yii\rbac\Permission;
 use yii\rbac\Role;
@@ -65,17 +64,13 @@ class DbManager extends \yii\rbac\DbManager
     public function load()
     {
         $this->authFile = Yii::getAlias($this->authFile);
-        $children = [];
-        $rules = [];
-        $assignments = [];
-        $items = [];
-
         $data = $this->loadFromFile($this->authFile);
 
+        $items = [];
+
         if (isset($data['rules'])) {
-            foreach ($data['rules'] as $name => $ruleData) {
-                $rules[$name] = unserialize($ruleData);
-                $this->addRule($rules[$name]);
+            foreach ($data['rules'] as $ruleData) {
+                $this->addRule(unserialize($ruleData));
             }
         }
 
@@ -84,7 +79,6 @@ class DbManager extends \yii\rbac\DbManager
                 $class = $item['type'] == Item::TYPE_PERMISSION
                     ? Permission::className()
                     : Role::className();
-
                 $items[$name] = new $class([
                     'name' => $name,
                     'description' => isset($item['description']) ? $item['description'] : null,
@@ -100,23 +94,18 @@ class DbManager extends \yii\rbac\DbManager
                 if (isset($item['children'])) {
                     foreach ($item['children'] as $childName) {
                         if (isset($items[$childName])) {
-                            $children[$name][$childName] = $items[$childName];
                             $this->addChild($items[$name], $items[$childName]);
                         }
                     }
                 }
-                if (isset($item['assignments'])) {
-                    foreach ($item['assignments'] as $userId => $assignment) {
-                        $assignments[$userId][$name] = new Assignment([
-                            'userId' => $userId,
-                            'roleName' => $assignment['roleName'],
-                            'createdAt' => isset($assignment['createdAt']) ? $assignment['createdAt'] : null,
-                        ]);
-                        $this->assign($items[$assignment['roleName']], $userId);
-                    }
-                }
             }
         }
+        if (isset($data['assignments'])) {
+            foreach ($data['assignments'] as $userId => $role) {
+                $this->assign($items[$role], $userId);
+            }
+        }
+
         return true;
     }
 
@@ -133,8 +122,9 @@ class DbManager extends \yii\rbac\DbManager
 
     public function assignRole()
     {
-        if (!Yii::$app->getUser()->getIsGuest()) {
-            $identity = Yii::$app->getUser()->getIdentity();
+        $user = Yii::$app->getUser();
+        if (!$user->getIsGuest()) {
+            $identity = $user->getIdentity();
             $userId = $identity->getId();
             $allRoles = array_keys($this->getRoles());
 

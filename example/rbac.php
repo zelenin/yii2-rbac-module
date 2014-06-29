@@ -30,5 +30,8 @@ return [
                 'editPost'
             ]
         ]
+    ],
+    'assignments' => [
+        // 1 => 'administrator' // userId => role
     ]
 ];
