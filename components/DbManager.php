@@ -2,16 +2,20 @@
 
 namespace Zelenin\yii\modules\Rbac\components;
 
-use Yii;
 use yii\rbac\Item;
 use yii\rbac\Permission;
 use yii\rbac\Role;
 use yii\web\User;
+use Yii;
 
 class DbManager extends \yii\rbac\DbManager
 {
     /** @var string */
-    public $authFile = '@app/data/rbac.php';
+    public $itemFile = '@app/rbac/items.php';
+    /** @var string */
+    public $assignmentFile = '@app/rbac/assignments.php';
+    /** @var string */
+    public $ruleFile = '@app/rbac/rules.php';
     /** @var string */
     public $defaultRole = 'user';
     /** @var string */
@@ -63,47 +67,43 @@ class DbManager extends \yii\rbac\DbManager
      */
     public function load()
     {
-        $this->authFile = Yii::getAlias($this->authFile);
-        $data = $this->loadFromFile($this->authFile);
+        $_items = [];
 
-        $items = [];
+        $items = $this->loadFromFile(Yii::getAlias($this->itemFile));
+        $itemsMtime = @filemtime(Yii::getAlias($this->itemFile));
+        $assignments = $this->loadFromFile(Yii::getAlias($this->assignmentFile));
+        $rules = $this->loadFromFile(Yii::getAlias($this->ruleFile));
 
-        if (isset($data['rules'])) {
-            foreach ($data['rules'] as $ruleData) {
-                $this->addRule(unserialize($ruleData));
-            }
+        foreach ($rules as $ruleData) {
+            $this->addRule(unserialize($ruleData));
         }
 
-        if (isset($data['items'])) {
-            foreach ($data['items'] as $name => $item) {
-                $class = $item['type'] == Item::TYPE_PERMISSION
-                    ? Permission::className()
-                    : Role::className();
-                $items[$name] = new $class([
-                    'name' => $name,
-                    'description' => isset($item['description']) ? $item['description'] : null,
-                    'ruleName' => isset($item['ruleName']) ? $item['ruleName'] : null,
-                    'data' => isset($item['data']) ? $item['data'] : null,
-                    'createdAt' => isset($item['createdAt']) ? $item['createdAt'] : null,
-                    'updatedAt' => isset($item['updatedAt']) ? $item['updatedAt'] : null,
-                ]);
-                $this->addItem($items[$name]);
-            }
+        foreach ($items as $name => $item) {
+            $class = $item['type'] == Item::TYPE_PERMISSION
+                ? Permission::className()
+                : Role::className();
+            $_items[$name] = new $class([
+                'name' => $name,
+                'description' => isset($item['description']) ? $item['description'] : null,
+                'ruleName' => isset($item['ruleName']) ? $item['ruleName'] : null,
+                'data' => isset($item['data']) ? $item['data'] : null,
+                'createdAt' => $itemsMtime,
+                'updatedAt' => $itemsMtime
+            ]);
+            $this->addItem($_items[$name]);
+        }
 
-            foreach ($data['items'] as $name => $item) {
-                if (isset($item['children'])) {
-                    foreach ($item['children'] as $childName) {
-                        if (isset($items[$childName])) {
-                            $this->addChild($items[$name], $items[$childName]);
-                        }
+        foreach ($items as $name => $item) {
+            if (isset($item['children'])) {
+                foreach ($item['children'] as $childName) {
+                    if (isset($_items[$childName])) {
+                        $this->addChild($_items[$name], $_items[$childName]);
                     }
                 }
             }
         }
-        if (isset($data['assignments'])) {
-            foreach ($data['assignments'] as $userId => $role) {
-                $this->assign($items[$role], $userId);
-            }
+        foreach ($assignments as $userId => $role) {
+            $this->assign($_items[$role], $userId);
         }
 
         return true;
