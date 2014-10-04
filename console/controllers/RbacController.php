@@ -21,7 +21,7 @@ class RbacController extends Controller
         }
         $auth->removeAll();
         if ($auth->load()) {
-            echo PHP_EOL . 'RBAC rules is generated' . PHP_EOL;
+            echo PHP_EOL . 'RBAC rules are generated' . PHP_EOL;
         }
     }
 }
