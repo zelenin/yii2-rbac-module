@@ -20,7 +20,7 @@ class DbManager extends \yii\rbac\DbManager
     public $defaultRole = 'user';
     /** @var string */
     public $roleParam = 'role';
-    /** @var User $user */
+    /** @var User */
     private $user;
 
     /** @var bool */
