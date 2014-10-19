@@ -1,6 +1,7 @@
 # Yii2 RBAC module
 
-[Yii2](http://www.yiiframework.com) RBAC module with generating assignments to DB from RBAC data storage files
+[Yii2](http://www.yiiframework.com) RBAC module with generating assignments to DB from RBAC data storage files.
+Also "classic" PhpManager is available.
 
 ## Installation
 
@@ -23,6 +24,8 @@ or add
 to the require section of your ```composer.json```
 
 ## Usage
+
+### DbManager
 
 Configure AuthManager component in config:
 
@@ -57,6 +60,22 @@ php yii rbac/generate
 ```
 
 For storage files examples see ```example``` directory
+
+### PhpManager
+
+Configure AuthManager component in config:
+
+```php
+'components' => [
+    'authManager' => [
+        'class' => \Zelenin\yii\modules\Rbac\components\PhpManager::className(),
+        'itemFile' => '@common/config/rbac/items.php',
+        'assignmentFile' => '@common/config/rbac/assignments.php',
+        'ruleFile' => '@common/config/rbac/rules.php',
+		'roleParam' => 'role', // User model attribute
+	]
+]
+```
 
 ## Info
 
