@@ -8,8 +8,13 @@ use yii\rbac\Assignment;
 class PhpManager extends \yii\rbac\PhpManager
 {
     /** @var string */
+    public $defaultRole = 'user';
+    /** @var string */
     public $roleParam = 'role';
 
+    /**
+     * @inheritdoc
+     */
     public function getAssignments($userId)
     {
         $user = Yii::$app->getUser();

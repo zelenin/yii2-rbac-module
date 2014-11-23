@@ -2,11 +2,13 @@
 
 namespace Zelenin\yii\modules\Rbac\components;
 
+use Yii;
+use yii\db\ActiveRecord;
 use yii\rbac\Item;
 use yii\rbac\Permission;
 use yii\rbac\Role;
+use yii\web\IdentityInterface;
 use yii\web\User;
-use Yii;
 
 class DbManager extends \yii\rbac\DbManager
 {
@@ -124,6 +126,7 @@ class DbManager extends \yii\rbac\DbManager
     {
         $user = Yii::$app->getUser();
         if (!$user->getIsGuest()) {
+            /** @var IdentityInterface|ActiveRecord $identity */
             $identity = $user->getIdentity();
             $userId = $identity->getId();
             $allRoles = array_keys($this->getRoles());
