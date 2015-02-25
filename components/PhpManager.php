@@ -3,7 +3,9 @@
 namespace Zelenin\yii\modules\Rbac\components;
 
 use Yii;
+use yii\db\ActiveRecord;
 use yii\rbac\Assignment;
+use yii\web\IdentityInterface;
 
 class PhpManager extends \yii\rbac\PhpManager
 {
@@ -18,11 +20,16 @@ class PhpManager extends \yii\rbac\PhpManager
     public function getAssignments($userId)
     {
         $user = Yii::$app->getUser();
-        $assignments = [];
-        if (!$user->getIsGuest()) {
+        /** @var IdentityInterface|ActiveRecord|null $identity */
+        $identity = $user->getIdentity();
+        $assignments = parent::getAssignments($userId);
+        $model = $userId === $user->getId()
+            ? $identity
+            : $identity::findOne($userId);
+        if ($model) {
             $assignment = new Assignment;
             $assignment->userId = $userId;
-            $assignment->roleName = $user->getIdentity()->{$this->roleParam};
+            $assignment->roleName = $model->{$this->roleParam};
             $assignments[$assignment->roleName] = $assignment;
         }
         return $assignments;
