@@ -25,37 +25,6 @@ class DbManager extends \yii\rbac\DbManager
     /** @var User */
     private $user;
 
-    /** @var bool */
-    public $enableCaching = false;
-    /** @var int */
-    public $cachingDuration = 300;
-    /** @var array */
-    private $cache = [];
-
-    /**
-     * @inheritdoc
-     */
-    public function checkAccess($userId, $permissionName, $params = [])
-    {
-        if (!$this->enableCaching || !$this->cachingDuration) {
-            return parent::checkAccess($userId, $permissionName, $params);
-        }
-        $key = serialize([__CLASS__, $userId, $permissionName, $params]);
-
-        if (isset($this->cache[$key])) {
-            return $this->cache[$key];
-        }
-
-        $cache = Yii::$app->getCache();
-        $data = $cache->get($key);
-        if ($data === false) {
-            $data = parent::checkAccess($userId, $permissionName, $params);
-            $this->cache[$key] = $data;
-            $cache->set($key, $data, $this->cachingDuration);
-        }
-        return $data;
-    }
-
     public function init()
     {
         parent::init();

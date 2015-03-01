@@ -37,10 +37,7 @@ Configure AuthManager component in config:
         'assignmentFile' => '@common/config/rbac/assignments.php',
         'ruleFile' => '@common/config/rbac/rules.php',
         'defaultRole' => 'user',
-		'roleParam' => 'role', // User model attribute
-		// optional
-		'enableCaching' => false,
-		'cachingDuration' => 60
+		'roleParam' => 'role' // User model attribute
 	]
 ]
 ```
